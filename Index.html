@@ -1,0 +1,315 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 11 Anime Academy - Arts & Commerce</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        anime: {
+                            primary: '#8b5cf6', // Violet 500
+                            secondary: '#ec4899', // Pink 500
+                            dark: '#0f0c1b',
+                            card: '#1e1b38',
+                            accent: '#38bdf8',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts & Lucide Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #0b0914;
+            color: #f3f4f6;
+            overflow-x: hidden;
+        }
+        /* Custom anime diagonal clip paths and glowing effects */
+        .diagonal-clip {
+            clip-path: polygon(0 0, 100% 0, 95% 100%, 0% 100%);
+        }
+        .anime-card-glow {
+            box-shadow: 0 0 25px rgba(139, 92, 246, 0.25);
+            transition: all 0.3s ease;
+        }
+        .anime-card-glow:hover {
+            box-shadow: 0 0 35px rgba(236, 72, 153, 0.4);
+            transform: translateY(-4px);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f0c1b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4c1d95;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #7c3aed;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+        .animate-pulse-glow {
+            animation: pulseGlow 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col relative selection:bg-pink-500 selection:text-white">
+
+    <!-- Atmospheric Background Effects -->
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden opacity-30">
+        <div class="absolute -top-40 -left-40 w-96 h-96 bg-purple-600 rounded-full filter blur-[120px]"></div>
+        <div class="absolute top-1/2 -right-40 w-96 h-96 bg-pink-600 rounded-full filter blur-[140px]"></div>
+        <div class="absolute -bottom-40 left-1/3 w-96 h-96 bg-blue-600 rounded-full filter blur-[150px]"></div>
+    </div>
+
+    <!-- Notification Modal (Replaces alert) -->
+    <div id="notificationModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden">
+        <div class="bg-slate-900 border border-purple-500/50 rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl text-center relative overflow-hidden">
+            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-pink-500"></div>
+            <div id="notifIcon" class="w-14 h-14 bg-purple-500/20 text-purple-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">⚡</div>
+            <h3 id="notifTitle" class="text-xl font-bold text-white mb-2">Notification</h3>
+            <p id="notifMessage" class="text-slate-300 text-sm mb-6">Message goes here...</p>
+            <button onclick="closeNotification()" class="w-full py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-semibold rounded-xl shadow-lg transition duration-200">Awesome!</button>
+        </div>
+    </div>
+
+    <!-- Google Login Modal / Screen -->
+    <div id="loginModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/90 backdrop-blur-md">
+        <div class="relative bg-slate-900/90 border border-purple-500/40 rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl overflow-hidden">
+            <div class="absolute -right-16 -top-16 w-48 h-48 bg-pink-500/20 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="absolute -left-16 -bottom-16 w-48 h-48 bg-purple-500/20 rounded-full blur-2xl pointer-events-none"></div>
+
+            <div class="text-center relative z-10">
+                <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl shadow-lg mb-4 text-3xl animate-float">
+                    ⚡
+                </div>
+                <h2 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-amber-300 mb-2">Anime Academy</h2>
+                <p class="text-slate-400 text-sm mb-6">Class 11 Arts & Commerce Interactive VN Hub</p>
+
+                <div class="space-y-4 mb-6 text-left bg-slate-800/50 p-4 rounded-2xl border border-purple-500/20">
+                    <div class="flex items-center gap-3 text-sm text-slate-300">
+                        <span class="text-pink-400">✨</span> 12 Iconic Anime Teachers & Guides
+                    </div>
+                    <div class="flex items-center gap-3 text-sm text-slate-300">
+                        <span class="text-purple-400">📚</span> CBSE, ICSE & State Boards Syllabus
+                    </div>
+                    <div class="flex items-center gap-3 text-sm text-slate-300">
+                        <span class="text-cyan-400">🎮</span> Story Mode Quizzes & XP Rewards
+                    </div>
+                </div>
+
+                <button onclick="handleGoogleLogin()" class="w-full py-3.5 px-4 bg-white hover:bg-slate-100 text-slate-900 font-bold rounded-xl shadow-xl flex items-center justify-center gap-3 transition duration-200 group">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                    </svg>
+                    <span class="group-hover:scale-105 transition">Sign in with Google</span>
+                </button>
+                <p class="text-xs text-slate-500 mt-4">By signing in, you agree to level up your Class 11 grades!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Navigation & Status Bar -->
+    <header class="sticky top-0 z-40 bg-slate-900/80 backdrop-blur-md border-b border-purple-500/20 px-4 lg:px-8 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2 cursor-pointer" onclick="switchTab('dashboard')">
+                <div class="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center font-black text-xl shadow-lg">⚡</div>
+                <div>
+                    <h1 class="font-extrabold text-lg text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 leading-tight">ANIME ACADEMY</h1>
+                    <span class="text-xs text-slate-400 tracking-wider font-semibold">CLASS 11 ARTS & COMMERCE</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status & Currency Bar -->
+        <div class="hidden md:flex items-center gap-6 bg-slate-950/60 px-5 py-2 rounded-2xl border border-purple-500/30">
+            <div class="flex items-center gap-2">
+                <span class="text-amber-400 text-lg">🪙</span>
+                <span id="coinCount" class="font-bold text-amber-300">1,250</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-pink-400 text-lg">✨</span>
+                <span id="xpCount" class="font-bold text-pink-300">3,420 XP</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-orange-400 text-lg">🔥</span>
+                <span id="streakCount" class="font-bold text-orange-300">7 Day Streak</span>
+            </div>
+        </div>
+
+        <!-- Audio & Profile Controls -->
+        <div class="flex items-center gap-3">
+            <button onclick="toggleBGM()" id="bgmBtn" title="Toggle BGM" class="p-2.5 rounded-xl bg-slate-800 hover:bg-purple-900/50 border border-purple-500/30 text-purple-300 transition flex items-center gap-2 text-sm font-medium">
+                <span id="bgmIcon">🎵</span> <span class="hidden sm:inline" id="bgmText">BGM: Off</span>
+            </button>
+            <div class="flex items-center gap-2 bg-slate-800/80 p-1.5 pl-3 rounded-xl border border-purple-500/30">
+                <span id="userNameDisplay" class="text-xs font-semibold text-purple-200 hidden sm:inline">Senpai</span>
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-purple-500 to-pink-500 flex items-center justify-center font-bold text-white shadow">
+                    🎓
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="bg-slate-900/40 border-b border-purple-500/10 px-4 lg:px-8 py-2 flex gap-2 overflow-x-auto">
+        <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-tab px-4 py-2 rounded-xl text-sm font-semibold transition bg-purple-600 text-white shadow-lg shadow-purple-600/30 flex items-center gap-2 whitespace-nowrap">
+            <i data-lucide="layout-dashboard" class="w-4 h-4"></i> VN Dashboard
+        </button>
+        <button onclick="switchTab('teachers')" id="nav-teachers" class="nav-tab px-4 py-2 rounded-xl text-sm font-semibold transition text-slate-300 hover:bg-slate-800 flex items-center gap-2 whitespace-nowrap">
+            <i data-lucide="users" class="w-4 h-4"></i> Anime Teachers
+        </button>
+        <button onclick="switchTab('curriculum')" id="nav-curriculum" class="nav-tab px-4 py-2 rounded-xl text-sm font-semibold transition text-slate-300 hover:bg-slate-800 flex items-center gap-2 whitespace-nowrap">
+            <i data-lucide="book-open" class="w-4 h-4"></i> Arts & Commerce Hub
+        </button>
+        <button onclick="switchTab('story')" id="nav-story" class="nav-tab px-4 py-2 rounded-xl text-sm font-semibold transition text-slate-300 hover:bg-slate-800 flex items-center gap-2 whitespace-nowrap">
+            <i data-lucide="message-square-code" class="w-4 h-4"></i> Story Mode & AI Tutor
+        </button>
+        <button onclick="switchTab('quiz')" id="nav-quiz" class="nav-tab px-4 py-2 rounded-xl text-sm font-semibold transition text-slate-300 hover:bg-slate-800 flex items-center gap-2 whitespace-nowrap">
+            <i data-lucide="gamepad-2" class="w-4 h-4"></i> Interactive Quizzes & Quests
+        </button>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="flex-1 p-4 lg:p-8 max-w-7xl mx-auto w-full z-10">
+
+        <!-- TAB 1: VN DASHBOARD -->
+        <section id="tab-dashboard" class="space-y-6">
+            <!-- Hero Banner -->
+            <div class="relative bg-gradient-to-r from-purple-950/80 via-slate-900 to-pink-950/80 border border-purple-500/40 rounded-3xl p-6 lg:p-10 overflow-hidden anime-card-glow">
+                <div class="absolute right-0 top-0 bottom-0 w-1/3 opacity-25 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-pink-500 via-purple-500 to-transparent pointer-events-none"></div>
+                <div class="relative z-10 max-w-2xl">
+                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-xs font-semibold mb-4 border border-purple-500/30">
+                        ✨ Welcome to Session 2026-2027 • CBSE / ICSE / State Boards
+                    </span>
+                    <h2 class="text-3xl lg:text-5xl font-black text-white mb-4 tracking-tight">Master Class 11 Arts & Commerce with Legendary Mentors</h2>
+                    <p class="text-slate-300 text-sm lg:text-base mb-6 leading-relaxed">
+                        Embark on a visual-novel style academic adventure! Learn Accounts, Economics, Political Science, History, and more guided by 12 elite anime teachers with adaptive AI explanations.
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <button onclick="switchTab('story')" class="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold rounded-2xl shadow-lg transition flex items-center gap-2">
+                            <span>▶ Resume Story Mode</span>
+                        </button>
+                        <button onclick="switchTab('teachers')" class="px-6 py-3 bg-slate-800/80 hover:bg-slate-800 border border-purple-500/40 text-purple-200 font-bold rounded-2xl transition flex items-center gap-2">
+                            <span>👥 Meet Your 12 Teachers</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Stats & Highlights Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Board Selector Card -->
+                <div class="bg-slate-900/80 border border-purple-500/30 rounded-3xl p-6 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                <span class="text-purple-400">🏫</span> Active Board
+                            </h3>
+                            <span id="activeBoardBadge" class="px-2.5 py-1 rounded-lg bg-purple-500/20 text-purple-300 text-xs font-bold">CBSE</span>
+                        </div>
+                        <p class="text-slate-400 text-sm mb-4">Select your educational board for tailored syllabus mapping and exam prep.</p>
+                        <select id="boardSelector" onchange="changeBoard(this.value)" class="w-full bg-slate-950 border border-purple-500/40 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-pink-500">
+                            <option value="CBSE">CBSE (Central Board)</option>
+                            <option value="ICSE">ICSE / ISC Board</option>
+                            <option value="State">All State Boards (UP, Maharashtra, Bihar, etc.)</option>
+                        </select>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-800 flex justify-between text-xs text-slate-400">
+                        <span>Status: Fully Aligned</span>
+                        <span class="text-green-400 font-semibold">● Live Sync</span>
+                    </div>
+                </div>
+
+                <!-- Featured Teacher Card -->
+                <div class="bg-gradient-to-br from-indigo-950/60 to-purple-950/60 border border-purple-500/30 rounded-3xl p-6 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-12 h-12 rounded-2xl bg-purple-600/30 border border-purple-400/30 flex items-center justify-center text-2xl">
+                                ♾️
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-white">Gojo Satoru</h4>
+                                <span class="text-xs text-purple-300">Maths Mentor</span>
+                            </div>
+                        </div>
+                        <p class="italic text-slate-300 text-sm mb-4">"Relax, it's just Maths! You'll ace it easily with limitless focus."</p>
+                    </div>
+                    <button onclick="switchTab('story')" class="w-full py-2.5 bg-purple-600/30 hover:bg-purple-600/50 border border-purple-500/50 text-purple-200 font-semibold rounded-xl text-sm transition">
+                        Ask Gojo a Doubt
+                    </button>
+                </div>
+
+                <!-- Daily Quest Progress -->
+                <div class="bg-slate-900/80 border border-purple-500/30 rounded-3xl p-6 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                <span class="text-pink-400">🎯</span> Daily VN Quest
+                            </h3>
+                            <span class="text-xs text-pink-300 font-bold">2/3 Done</span>
+                        </div>
+                        <p class="text-slate-400 text-sm mb-4">Complete 3 chapter revisions to earn bonus coins and keep your streak alive!</p>
+                        <div class="w-full bg-slate-950 rounded-full h-3 mb-2 overflow-hidden border border-slate-800">
+                            <div class="bg-gradient-to-r from-purple-500 to-pink-500 h-full rounded-full" style="width: 66%"></div>
+                        </div>
+                    </div>
+                    <button onclick="switchTab('quiz')" class="w-full py-2.5 bg-pink-600/20 hover:bg-pink-600/30 border border-pink-500/40 text-pink-300 font-semibold rounded-xl text-sm transition">
+                        Start Today's Quiz
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: ANIME TEACHERS -->
+        <section id="tab-teachers" class="space-y-6 hidden">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-2xl lg:text-3xl font-extrabold text-white">Legendary Anime Teachers</h2>
+                    <p class="text-slate-400 text-sm">Choose your favorite mentor for immersive guidance and tailored explanations.</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="filterTeachers('all')" class="px-4 py-2 rounded-xl bg-purple-600 text-white text-xs font-bold transition">All (12)</button>
+                    <button onclick="filterTeachers('Arts')" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition">Arts</button>
+                    <button onclick="filterTeachers('Commerce')" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition">Commerce</button>
+                </div>
+            </div>
+
+            <!-- Teachers Grid -->
+            <div id="teachersGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Populated dynamically via JS -->
+            </div>
+        </section>
+
+        <!-- TAB 3: CURRICULUM & SUBJECT HUB -->
+        <section id="tab-curriculum" class="space-y-6 hidden">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-2xl lg:text-3xl font-extrabold text-white">Class 11 Arts
