@@ -1,0 +1,354 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anime Arts Academy</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#101322;color:#f4f3ff;
+ font-family:Arial,sans-serif;
+}
+header{
+ padding:22px;background:linear-gradient(120deg,#512b91,#172c59);
+ text-align:center;
+}
+header h1{margin:0;color:#fff}
+header p{color:#ded9ff}
+nav{
+ display:flex;gap:8px;overflow:auto;padding:12px;
+ background:#191d30;position:sticky;top:0;z-index:5
+}
+button{
+ border:0;border-radius:10px;padding:12px;
+ background:#7956d8;color:white;font-weight:bold;
+ cursor:pointer
+}
+nav button{white-space:nowrap}
+main{max-width:850px;margin:auto;padding:15px}
+.card{
+ background:#1d233a;padding:17px;margin:12px 0;
+ border:1px solid #343d60;border-radius:15px
+}
+.card h3{margin-top:0;color:#c9a9ff}
+.grid{
+ display:grid;grid-template-columns:repeat(2,1fr);gap:10px
+}
+.subject{
+ background:#252e4c;padding:15px;border-radius:13px;
+ cursor:pointer;border:1px solid #465179
+}
+.subject:active{background:#493c78}
+.small{color:#b9bdd2;font-size:13px}
+.hidden{display:none}
+input,textarea,select{
+ width:100%;padding:12px;margin:8px 0;
+ border-radius:9px;border:1px solid #596080;
+ background:#11182c;color:white
+}
+.option{
+ display:block;width:100%;margin:8px 0;
+ text-align:left;background:#303a5c
+}
+#dialogue{line-height:1.7;white-space:pre-wrap}
+.progress{
+ height:12px;background:#343a53;border-radius:20px;overflow:hidden
+}
+#bar{height:100%;width:0;background:#a17bff}
+footer{text-align:center;color:#9299b5;padding:25px}
+@media(max-width:480px){
+ .grid{grid-template-columns:1fr 1fr}
+ header h1{font-size:23px}
+}
+</style>
+</head>
+<body>
+
+<header>
+<h1>⚔️ ANIME ARTS ACADEMY</h1>
+<p>Your journey to becoming a top student begins here.</p>
+<div>⭐ XP: <span id="xp">0</span> |
+🏆 Level: <span id="level">1</span></div>
+</header>
+
+<nav>
+<button onclick="show('home')">🏠 Home</button>
+<button onclick="show('subjects')">📚 Subjects</button>
+<button onclick="show('classroom')">🎓 Classroom</button>
+<button onclick="show('pdf')">📄 PDF Lab</button>
+<button onclick="show('profile')">🏆 Profile</button>
+</nav>
+
+<main>
+
+<section id="home">
+<div class="card">
+<h2>Welcome, Student! 👋</h2>
+<p>Your mission: Master Class 11 Arts.</p>
+<h3>Academy Progress</h3>
+<div class="progress"><div id="bar"></div></div>
+<p class="small" id="progressText">0 XP earned</p>
+</div>
+
+<div class="card">
+<h3>⚡ Today's Mission</h3>
+<p>Attend one lesson and complete a quiz.</p>
+<button onclick="show('subjects')">Start Learning</button>
+</div>
+
+<div class="card">
+<h3>🏫 Academy Rules</h3>
+<p>1. Attend your classes.</p>
+<p>2. Complete chapter missions.</p>
+<p>3. Pass quizzes to earn XP.</p>
+<p>4. Revise before examinations.</p>
+</div>
+</section>
+
+<section id="subjects" class="hidden">
+<h2>📚 Your Subjects</h2>
+<div class="grid" id="subjectGrid"></div>
+</section>
+
+<section id="classroom" class="hidden">
+<div class="card">
+<h2 id="lessonTitle">Anime Classroom</h2>
+<p class="small" id="teacherName">Teacher: Sensei</p>
+<div id="dialogue">
+Welcome to the academy! Select a subject to begin.
+</div>
+</div>
+<div class="card">
+<h3>Ask your teacher</h3>
+<input id="question" placeholder="Ask about the lesson...">
+<button onclick="askTeacher()">Ask Question</button>
+<p id="answer"></p>
+</div>
+<div class="card">
+<h3>📝 Knowledge Check</h3>
+<p id="quizQuestion">Choose a lesson first.</p>
+<div id="options"></div>
+<p id="feedback"></p>
+</div>
+</section>
+
+<section id="pdf" class="hidden">
+<div class="card">
+<h2>📄 PDF Learning Lab</h2>
+<p>Upload your Class 11 textbook or chapter PDF.</p>
+<input type="file" id="pdfFile" accept=".pdf">
+<button onclick="readPDF()">Extract PDF Text</button>
+<p id="pdfStatus"></p>
+<div id="pdfText"></div>
+</div>
+</section>
+
+<section id="profile" class="hidden">
+<div class="card">
+<h2>🏆 Student Profile</h2>
+<p>Rank: <span id="rank">Beginner</span></p>
+<p>Total XP: <span id="profileXP">0</span></p>
+<p>Level: <span id="profileLevel">1</span></p>
+<button onclick="resetProgress()">Reset Progress</button>
+</div>
+</section>
+
+</main>
+
+<footer>Anime Arts Academy | Class 11 Edition</footer>
+
+<script>
+if(window.pdfjsLib){
+ pdfjsLib.GlobalWorkerOptions.workerSrc=
+ 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+}
+
+const subjects = [
+ {name:"Economics",icon:"📊",teacher:"Ayan Sensei",
+  lessons:[
+   {title:"Introduction to Statistics",
+    text:"Statistics helps us collect, organise, present and analyse numerical information. For example, a school can use marks data to understand student performance.",
+    q:"What is the main purpose of statistics?",
+    opts:["To collect and analyse data","To draw anime","To memorise stories","To avoid calculations"],a:0},
+   {title:"Collection of Data",
+    text:"Data can be collected through primary and secondary sources. Primary data is collected first-hand by the investigator.",
+    q:"What is primary data?",
+    opts:["First-hand collected data","Old newspaper data","Copied data","Imaginary data"],a:0}
+  ]},
+ {name:"History",icon:"🏛️",teacher:"Mikasa Sensei",
+  lessons:[
+   {title:"Writing and City Life",
+    text:"Ancient Mesopotamia developed important urban centres. Writing helped people maintain records, manage trade and organise administration.",
+    q:"Why was writing important in early cities?",
+    opts:["Record keeping","Only decoration","Sports","Entertainment only"],a:0}
+  ]},
+ {name:"Political Science",icon:"⚖️",teacher:"Levi Sensei",
+  lessons:[
+   {title:"Constitution: Why and How?",
+    text:"A Constitution establishes the basic rules and principles by which a country is governed. It distributes powers and protects rights.",
+    q:"What is a Constitution?",
+    opts:["Basic rules of governance","A sports rulebook","A shopping list","A personal diary"],a:0}
+  ]},
+ {name:"English",icon:"📖",teacher:"Kakashi Sensei",
+  lessons:[
+   {title:"Reading and Comprehension",
+    text:"Reading comprehension means understanding a passage, identifying its central idea and interpreting information.",
+    q:"What does comprehension mean?",
+    opts:["Understanding a text","Copying every word","Ignoring a passage","Writing randomly"],a:0}
+  ]},
+ {name:"Hindi",icon:"✍️",teacher:"Shinobu Sensei",
+  lessons:[
+   {title:"गद्य और पद्य अध्ययन",
+    text:"गद्य में विचार सामान्य वाक्यों के माध्यम से व्यक्त किए जाते हैं। पद्य में भावों और विचारों को काव्यात्मक रूप दिया जाता है।",
+    q:"पद्य का मुख्य रूप क्या है?",
+    opts:["काव्यात्मक अभिव्यक्ति","केवल गणना","समाचार सूची","पत्र सूची"],a:0}
+  ]},
+ {name:"Physical Education",icon:"🏃",teacher:"Rock Lee Sensei",
+  lessons:[
+   {title:"Physical Fitness",
+    text:"Physical fitness includes health-related components such as endurance, strength, flexibility and body composition.",
+    q:"Which is a component of physical fitness?",
+    opts:["Flexibility","Procrastination","Guessing","Sleeping in class"],a:0}
+  ]}
+];
+
+let xp=Number(localStorage.getItem("academyXP"))||0;
+let currentSubject=null;
+let currentLesson=null;
+let answered=false;
+let pdfContent="";
+
+function save(){
+ localStorage.setItem("academyXP",xp);
+ update();
+}
+
+function update(){
+ let level=Math.floor(xp/100)+1;
+ document.getElementById("xp").textContent=xp;
+ document.getElementById("level").textContent=level;
+ document.getElementById("profileXP").textContent=xp;
+ document.getElementById("profileLevel").textContent=level;
+ document.getElementById("bar").style.width=(xp%100)+"%";
+ document.getElementById("progressText").textContent=xp+" XP earned";
+ document.getElementById("rank").textContent=
+ level>=10?"Academy Master":level>=5?"Elite Student":
+ level>=3?"Advanced Student":"Beginner";
+}
+
+function show(id){
+ document.querySelectorAll("main section").forEach(
+ s=>s.classList.add("hidden"));
+ document.getElementById(id).classList.remove("hidden");
+}
+
+function createSubjects(){
+ const grid=document.getElementById("subjectGrid");
+ subjects.forEach((s,i)=>{
+ let div=document.createElement("div");
+ div.className="subject";
+ div.innerHTML=`<h3>${s.icon} ${s.name}</h3>
+ <p class="small">${s.lessons.length} starter lessons</p>
+ <button>Enter Class</button>`;
+ div.onclick=()=>openSubject(i);
+ grid.appendChild(div);
+ });
+}
+
+function openSubject(index){
+ currentSubject=subjects[index];
+ show("classroom");
+ document.getElementById("teacherName").textContent=
+ "Teacher: "+currentSubject.teacher;
+ openLesson(0);
+}
+
+function openLesson(index){
+ currentLesson=currentSubject.lessons[index];
+ answered=false;
+ document.getElementById("lessonTitle").textContent=
+ currentSubject.name+" — "+currentLesson.title;
+ document.getElementById("dialogue").textContent=
+ currentSubject.teacher+": Welcome to today's lesson!\n\n"+
+ currentLesson.text+
+ "\n\nTeacher: Read this carefully. Understanding is more important than memorising!";
+ document.getElementById("quizQuestion").textContent=
+ currentLesson.q;
+ document.getElementById("feedback").textContent="";
+ document.getElementById("answer").textContent="";
+ const box=document.getElementById("options");
+ box.innerHTML="";
+ currentLesson.opts.forEach((option,i)=>{
+ let btn=document.createElement("button");
+ btn.className="option";
+ btn.textContent=option;
+ btn.onclick=()=>checkAnswer(i);
+ box.appendChild(btn);
+ });
+}
+
+function checkAnswer(i){
+ if(answered)return;
+ answered=true;
+ if(i===currentLesson.a){
+ document.getElementById("feedback").textContent=
+ "🎉 Correct! +20 XP. Excellent work!";
+ xp+=20;
+ save();
+ }else{
+ document.getElementById("feedback").textContent=
+ "Not quite! Review the lesson and try another question next time.";
+ }
+}
+
+function askTeacher(){
+ let q=document.getElementById("question").value.trim();
+ if(!q)return;
+ let response;
+ if(pdfContent){
+ response="Your PDF contains study material. Review the extracted text below and identify the paragraph related to your question.";
+ }else{
+ response="Let's go step by step! First read the lesson above, then identify its main concept. A full AI-powered teacher will be added in a later version.";
+ }
+ document.getElementById("answer").textContent=
+ currentSubject.teacher+": "+response;
+}
+
+async function readPDF(){
+ const file=document.getElementById("pdfFile").files[0];
+ if(!file){alert("Please select a PDF first.");return;}
+ document.getElementById("pdfStatus").textContent="Reading PDF...";
+ try{
+ const buffer=await file.arrayBuffer();
+ const pdf=await pdfjsLib.getDocument({data:buffer}).promise;
+ pdfContent="";
+ for(let i=1;i<=pdf.numPages;i++){
+ const page=await pdf.getPage(i);
+ const content=await page.getTextContent();
+ pdfContent+=content.items.map(x=>x.str).join(" ")+"\n";
+ }
+ document.getElementById("pdfStatus").textContent=
+ "Successfully extracted "+pdf.numPages+" pages!";
+ document.getElementById("pdfText").textContent=
+ pdfContent.slice(0,15000);
+ }catch(e){
+ document.getElementById("pdfStatus").textContent=
+ "Could not read PDF. Please try another file.";
+ }
+}
+
+function resetProgress(){
+ if(confirm("Are you sure you want to reset your XP?")){
+ xp=0;save();
+ }
+}
+
+createSubjects();
+update();
+</script>
+</body>
+  </html>
+  
